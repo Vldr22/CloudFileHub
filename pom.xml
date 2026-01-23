@@ -24,7 +24,7 @@
     </properties>
 
     <modules>
-
+        <module>s3-file-service</module>
     </modules>
 
 </project>
