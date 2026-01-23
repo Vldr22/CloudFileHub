@@ -1,0 +1,51 @@
+# === Spring Configuration ===
+spring:
+  application:
+    name: S3FileManager
+
+  profiles:
+    active: dev
+
+  config:
+    import: optional:file:.env[.properties]
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+  # === Flyway ===
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
+
+# === Yandex Object Storage ===
+yandex:
+  storage:
+    accessKey: ${ACCESS_KEY}
+    secretKey: ${SECRET_KEY}
+    endpoint: https://storage.yandexcloud.net
+    region: ru-central1
+    bucketName: first-aws-bucket
+
+# === Application Configuration ===
+app:
+  pageable:
+    default-page-size: 10
+    max-page-size: 20
+
+  jwt:
+    secretKey: ${JWT_SECRET_KEY}
+    expiration: 86400  # 24h
+
+  admin:
+    name: ${ADMIN_NAME}
+    password: ${ADMIN_PASSWORD}
+
+  multiple-upload:
+    max-batch-size: 5
