@@ -1,0 +1,24 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: antivirus-service
+  config:
+    import: optional:file:../.env[.properties]
+
+server:
+  port: 8081
+
+# === Yandex Object Storage ===
+yandex:
+  storage:
+    access-key: ${YANDEX_ACCESS_KEY}
+    secret-key: ${YANDEX_SECRET_KEY}
+    endpoint: ${YANDEX_ENDPOINT:https://storage.yandexcloud.net}
+    region: ${YANDEX_REGION:ru-central1}
+    bucket-name: ${YANDEX_BUCKET_NAME}
+
+# === ClamAV ===
+clamav:
+  host: ${CLAMAV_HOST:localhost}
+  port: ${CLAMAV_PORT:3310}

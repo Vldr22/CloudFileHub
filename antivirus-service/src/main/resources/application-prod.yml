@@ -1,0 +1,11 @@
+# === ClamAV (production) ===
+clamav:
+  host: ${CLAMAV_HOST}
+  port: ${CLAMAV_PORT}
+
+# === Logging (minimal) ===
+logging:
+  level:
+    root: WARN
+    org.resume.fileantivirusservice: INFO
+    org.springframework.security: WARN
