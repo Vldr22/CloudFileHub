@@ -25,6 +25,7 @@
 
     <modules>
         <module>s3-file-service</module>
+        <module>antivirus-service</module>
     </modules>
 
 </project>

@@ -1,0 +1,12 @@
+# === ClamAV (local) ===
+clamav:
+  host: localhost
+  port: 3310
+
+# === Logging (verbose) ===
+logging:
+  level:
+    root: INFO
+    org.resume.fileantivirusservice: DEBUG
+    org.springframework.transaction: DEBUG
+    org.springframework.jdbc.datasource: DEBUG
