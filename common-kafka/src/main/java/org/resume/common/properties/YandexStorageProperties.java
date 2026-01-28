@@ -1,13 +1,17 @@
-package org.resume.fileantivirusservice.properties;
+package org.resume.common.properties;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
-@Slf4j
+/**
+ * Конфигурация для подключения к Yandex Object Storage (S3-совместимое API).
+ * <p>
+ * Свойства загружаются из application.yml с префиксом "yandex.storage".
+ */
+
 @Data
 @Validated
 @Component

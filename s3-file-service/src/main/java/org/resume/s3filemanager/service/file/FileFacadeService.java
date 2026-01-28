@@ -15,6 +15,7 @@ import org.resume.s3filemanager.entity.User;
 import org.resume.s3filemanager.enums.CommonResponseStatus;
 import org.resume.s3filemanager.exception.*;
 import org.resume.s3filemanager.properties.FileUploadProperties;
+import org.resume.s3filemanager.service.kafka.FileEventService;
 import org.resume.s3filemanager.validation.FileValidator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class FileFacadeService {
     private final FilePermissionService filePermissionService;
     private final FileValidator fileValidator;
     private final FileUploadProperties fileUploadProperties;
-
+    private final FileEventService fileEventService;
 
     /**
      * Загружает один файл с проверкой прав пользователя.
@@ -175,8 +176,11 @@ public class FileFacadeService {
         fileStorageService.uploadFileYandexS3(uniqueFileName, fileBytes, file.getContentType());
 
         try {
-            fileMetadataService.saveFileWithPermission(file, uniqueFileName, fileHash, user);
+            FileMetadata saved = fileMetadataService.saveFileWithPermission(file, uniqueFileName, fileHash, user);
             log.info("File uploaded successfully: {}", uniqueFileName);
+
+            fileEventService.publishFileUploadEvent(saved, user.getId());
+
             return uniqueFileName;
         } catch (Exception e) {
             log.warn("DB save failed, rolling back S3 upload: {}", uniqueFileName);

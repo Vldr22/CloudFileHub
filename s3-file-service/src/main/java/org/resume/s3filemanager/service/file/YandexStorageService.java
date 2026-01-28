@@ -3,8 +3,8 @@ package org.resume.s3filemanager.service.file;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.resume.common.properties.YandexStorageProperties;
 import org.resume.s3filemanager.exception.S3YandexException;
-import org.resume.s3filemanager.properties.YandexStorageProperties;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;

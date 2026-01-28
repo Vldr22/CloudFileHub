@@ -1,10 +1,10 @@
 package org.resume.fileantivirusservice.service;
 
+import org.resume.common.dto.FileScanResult;
+import org.resume.common.enums.ScanStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.resume.fileantivirusservice.constant.ErrorMessages;
-import org.resume.fileantivirusservice.dto.FileScanResult;
-import org.resume.fileantivirusservice.enums.ScanStatus;
 import org.resume.fileantivirusservice.exception.ClamAvScanException;
 import org.springframework.stereotype.Service;
 import xyz.capybara.clamav.ClamavClient;
