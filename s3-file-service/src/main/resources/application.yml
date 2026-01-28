@@ -24,6 +24,13 @@ spring:
       max-file-size: 30MB
       max-request-size: 30MB
 
+  # === Kafka Configuration ===
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
 # === Yandex Object Storage ===
 yandex:
   storage:
@@ -49,3 +56,12 @@ app:
 
   multiple-upload:
     max-batch-size: 5
+
+# === Kafka Topics ===
+kafka:
+  topics:
+    file-upload-events: file-upload-events
+    file-scan-results: file-scan-results
+  retry:
+    max-attempts: 3
+    backoff-delay: 5000

@@ -4,8 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.resume.fileantivirusservice.constant.ErrorMessages;
 import org.resume.fileantivirusservice.exception.S3DownloadException;
-import org.resume.fileantivirusservice.properties.YandexStorageProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
+import org.resume.common.properties.YandexStorageProperties;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -20,6 +21,7 @@ import java.io.InputStream;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@EnableConfigurationProperties(YandexStorageProperties.class)
 public class S3YandexService {
 
     private final S3Client yandexS3Client;

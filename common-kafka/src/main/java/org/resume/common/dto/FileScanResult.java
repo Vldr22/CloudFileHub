@@ -1,8 +1,8 @@
-package org.resume.fileantivirusservice.dto;
+package org.resume.common.dto;
 
+import org.resume.common.enums.ScanStatus;
 import lombok.Builder;
 import lombok.Data;
-import org.resume.fileantivirusservice.enums.ScanStatus;
 
 import java.time.Instant;
 

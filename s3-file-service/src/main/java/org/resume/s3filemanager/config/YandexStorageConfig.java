@@ -2,7 +2,7 @@ package org.resume.s3filemanager.config;
 
 
 import lombok.RequiredArgsConstructor;
-import org.resume.s3filemanager.properties.YandexStorageProperties;
+import org.resume.common.properties.YandexStorageProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;

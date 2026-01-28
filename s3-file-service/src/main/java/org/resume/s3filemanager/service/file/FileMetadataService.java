@@ -37,7 +37,7 @@ public class FileMetadataService {
      * @param fileHash MD5 хеш содержимого файла
      * @param user пользователь, загрузивший файл
      */
-    public void saveDatabaseMetadata(MultipartFile file, String uniqueFileName,
+    public FileMetadata saveDatabaseMetadata(MultipartFile file, String uniqueFileName,
                                      String fileHash, User user) {
         FileMetadata metadata = FileMetadata.builder()
                 .uniqueName(uniqueFileName)
@@ -48,7 +48,7 @@ public class FileMetadataService {
                 .user(user)
                 .build();
 
-        fileMetadataRepository.save(metadata);
+        return fileMetadataRepository.save(metadata);
     }
 
     /**
@@ -65,9 +65,10 @@ public class FileMetadataService {
     }
 
     @Transactional
-    public void saveFileWithPermission(MultipartFile file, String uniqueFileName, String fileHash, User user) {
-        saveDatabaseMetadata(file, uniqueFileName, fileHash, user);
+    public FileMetadata saveFileWithPermission(MultipartFile file, String uniqueFileName, String fileHash, User user) {
+        FileMetadata saved = saveDatabaseMetadata(file, uniqueFileName, fileHash, user);
         fileUploadPermissionService.markFileUploaded();
+        return saved;
     }
 
     @Transactional
