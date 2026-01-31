@@ -1,7 +1,7 @@
 package org.resume.fileantivirusservice.service;
 
-import org.resume.common.dto.FileScanResult;
-import org.resume.common.enums.ScanStatus;
+import org.resume.common.model.FileScanResult;
+import org.resume.common.model.ScanStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.resume.fileantivirusservice.constant.ErrorMessages;
@@ -21,24 +21,21 @@ public class ClamAVService {
     private final ClamavClient clamavClient;
 
     public FileScanResult scanFile(String s3Key, InputStream inputStream) {
-        log.info("Starting ClamAV scan for s3Key={}", s3Key);
-
         try {
             ScanResult scanResult = clamavClient.scan(inputStream);
 
             if (scanResult instanceof ScanResult.OK) {
-                log.info("File is CLEAN: s3Key={}", s3Key);
                 return buildScanResult(s3Key, ScanStatus.CLEAN, null, null);
 
             } else if (scanResult instanceof ScanResult.VirusFound virusFound) {
                 String virusName = virusFound.getFoundViruses().keySet().iterator().next();
-                log.warn("Virus FOUND: s3Key={}, virus={}", s3Key, virusName);
+                log.warn("Virus found: s3Key={}, virus={}", s3Key, virusName);
                 return buildScanResult(s3Key, ScanStatus.INFECTED, virusName, null);
 
-            } else {
-                log.error("Unknown scan result for s3Key={}: {}", s3Key, scanResult.getClass());
-                return buildScanResult(s3Key, ScanStatus.ERROR, null, ErrorMessages.CLAMAV_UNKNOWN_RESULT);
             }
+
+            log.error("Unknown scan result for s3Key={}: {}", s3Key, scanResult.getClass());
+            return buildScanResult(s3Key, ScanStatus.ERROR, null, ErrorMessages.CLAMAV_UNKNOWN_RESULT);
 
         } catch (Exception e) {
             log.error("ClamAV scan failed for s3Key={}", s3Key, e);

@@ -7,15 +7,10 @@ import org.resume.fileantivirusservice.exception.S3DownloadException;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.resume.common.properties.YandexStorageProperties;
-import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 @Slf4j
@@ -32,34 +27,20 @@ public class S3YandexService {
      *
      * @param s3Key уникальный ключ файла в S3
      * @return InputStream с содержимым файла
-     * @throws S3DownloadException если произошла техническая ошибка (network, timeout, 500)
+     * @throws S3DownloadException если произошла техническая ошибка
      */
     public InputStream downloadFile(String s3Key) {
-        String bucketName = yandexStorageProperties.getBucketName();
-
-        log.info("Downloading file from S3: bucket={}, s3Key={}", bucketName, s3Key);
-
         try {
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                    .bucket(bucketName)
+                    .bucket(yandexStorageProperties.getBucketName())
                     .key(s3Key)
                     .build();
 
-            ResponseInputStream<GetObjectResponse> s3Object = yandexS3Client.getObject(getObjectRequest);
-
-            byte[] fileBytes = s3Object.readAllBytes();
-
-            log.info("File downloaded successfully: s3Key={}, size={} bytes", s3Key, fileBytes.length);
-
-            return new ByteArrayInputStream(fileBytes);
+            return yandexS3Client.getObject(getObjectRequest);
 
         } catch (S3Exception e) {
-            log.error("S3 service error while downloading file: s3Key={}, statusCode={}",
-                    s3Key, e, e);
+            log.error("S3 error downloading file: {}", s3Key, e);
             throw new S3DownloadException(ErrorMessages.S3_SERVICE_UNAVAILABLE, e);
-        } catch (IOException e) {
-            log.error("IO error while reading file from S3: s3Key={}", s3Key, e);
-            throw new S3DownloadException(ErrorMessages.S3_READ_FAILED, e);
         }
     }
 }

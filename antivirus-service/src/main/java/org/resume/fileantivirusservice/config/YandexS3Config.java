@@ -1,6 +1,7 @@
 package org.resume.fileantivirusservice.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.resume.common.properties.YandexStorageProperties;
@@ -22,6 +23,7 @@ import java.net.URI;
  */
 @Configuration
 @RequiredArgsConstructor
+@EnableConfigurationProperties({YandexStorageProperties.class})
 public class YandexS3Config {
 
     private final YandexStorageProperties properties;
