@@ -10,3 +10,4 @@ logging:
     org.resume.fileantivirusservice: DEBUG
     org.springframework.transaction: DEBUG
     org.springframework.jdbc.datasource: DEBUG
+    ## software.amazon.awssdk: DEBUG

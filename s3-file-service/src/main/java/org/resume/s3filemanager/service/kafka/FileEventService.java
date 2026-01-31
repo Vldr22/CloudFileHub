@@ -2,7 +2,7 @@ package org.resume.s3filemanager.service.kafka;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.resume.common.dto.FileUploadEvent;
+import org.resume.common.model.FileUploadEvent;
 import org.resume.common.properties.YandexStorageProperties;
 import org.resume.s3filemanager.entity.FileMetadata;
 import org.springframework.stereotype.Service;

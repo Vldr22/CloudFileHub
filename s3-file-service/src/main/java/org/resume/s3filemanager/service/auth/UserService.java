@@ -94,8 +94,17 @@ public class UserService {
      */
     @Transactional
     public void updateUploadStatus(User user, FileUploadStatus status) {
+        log.info("BEFORE UPDATE: user={}, currentStatus={}, newStatus={}",
+                user.getUsername(), user.getUploadStatus(), status);
+
+        if (user.getUploadStatus() == FileUploadStatus.UNLIMITED) {
+            log.warn("SKIPPING: User {} has UNLIMITED status, not changing to {}",
+                    user.getUsername(), status);
+            return;
+        }
         user.setUploadStatus(status);
         userRepository.save(user);
+        log.info("AFTER UPDATE: user={}, newStatus={}", user.getUsername(), user.getUploadStatus());
     }
 
     public Page<User> findAll(Pageable pageable) {

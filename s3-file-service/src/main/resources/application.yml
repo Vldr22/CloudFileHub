@@ -26,10 +26,17 @@ spring:
 
   # === Kafka Configuration ===
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: s3-file-manager-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "org.resume.common.model"
 
 # === Yandex Object Storage ===
 yandex:
@@ -62,6 +69,9 @@ kafka:
   topics:
     file-upload-events: file-upload-events
     file-scan-results: file-scan-results
+    file-upload-events-dlt: file-upload-events.DLT
   retry:
-    max-attempts: 3
-    backoff-delay: 5000
+    max-attempts: 3         #Кол-во попыток
+    backoff-delay: 10000    # 10 секунд — начальная задержка
+    multiplier: 2.0         # Множитель: 10s → 20s → 40s
+    max-interval: 60000     # 60 секунд — максимальная задержка

@@ -2,7 +2,7 @@ package org.resume.s3filemanager.service.kafka;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.resume.common.dto.FileUploadEvent;
+import org.resume.common.model.FileUploadEvent;
 import org.resume.common.properties.KafkaProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -24,7 +24,7 @@ public class FileEventProducer {
     private final KafkaProperties kafkaProperties;
 
     public void sendFileUploadEvent(FileUploadEvent event) {
-        String topic = kafkaProperties.getTopic().getFileUploadEvents();
+        String topic = kafkaProperties.getTopics().getFileUploadEvents();
 
         log.info("Sending file upload event to Kafka: fileId={}, s3Key={}",
                 event.getFileId(), event.getS3Key());
