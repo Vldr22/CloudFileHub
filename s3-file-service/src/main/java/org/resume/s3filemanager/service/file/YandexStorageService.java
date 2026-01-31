@@ -70,11 +70,8 @@ public class YandexStorageService {
         )) {
             return response.readAllBytes();
 
-        } catch (S3Exception e) {
+        } catch (S3Exception | IOException e) {
             log.error("S3 error downloading file: {}", uniqueFileName, e);
-            throw new S3YandexException(e, uniqueFileName);
-        } catch (IOException e) {
-            log.error("IO error downloading file: {}", uniqueFileName, e);
             throw new S3YandexException(e, uniqueFileName);
         }
     }
