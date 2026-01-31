@@ -1,7 +1,7 @@
-package org.resume.common.enums;
+package org.resume.common.model;
 
 public enum ScanStatus {
-    PENDING,
+    PENDING_SCAN,
     CLEAN,
     INFECTED,
     ERROR

@@ -1,13 +1,16 @@
-package org.resume.common.dto;
+package org.resume.common.model;
 
-import org.resume.common.enums.ScanStatus;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class FileScanResult {
     private String s3Key;
     private ScanStatus status;

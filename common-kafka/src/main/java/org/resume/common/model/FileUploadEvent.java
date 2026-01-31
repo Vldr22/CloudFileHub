@@ -1,4 +1,4 @@
-package org.resume.common.dto;
+package org.resume.common.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -16,16 +16,19 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "kafka")
 public class KafkaProperties {
 
-    private KafkaTopic topic;
+    private KafkaTopics topics;
     private RetryConfig retry;
 
     @Data
-    public static class KafkaTopic {
+    public static class KafkaTopics {
         @NotBlank(message = "File upload events topic is required")
         private String fileUploadEvents;
 
         @NotBlank(message = "File scan results topic is required")
         private String fileScanResults;
+
+        @NotBlank(message = "DLT topic is required")
+        private String fileUploadEventsDlt;
     }
 
     @Data
@@ -35,6 +38,12 @@ public class KafkaProperties {
 
         @Min(value = 1000, message = "Backoff delay must be at least 1000ms")
         private Long backoffDelay;
+
+        @Min(value = 1, message = "Multiplier must be at least 1")
+        private Double multiplier;
+
+        @Min(value = 1000, message = "Max interval must be at least 1000ms")
+        private Long maxInterval;
     }
 
 }
