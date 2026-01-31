@@ -3,6 +3,7 @@ package org.resume.s3filemanager.service.file;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.resume.common.model.ScanStatus;
 import org.resume.s3filemanager.entity.FileMetadata;
 import org.resume.s3filemanager.entity.User;
 import org.resume.s3filemanager.enums.FileUploadStatus;
@@ -45,6 +46,7 @@ public class FileMetadataService {
                 .type(file.getContentType())
                 .size(file.getSize())
                 .fileHash(fileHash)
+                .scanStatus(ScanStatus.PENDING_SCAN)
                 .user(user)
                 .build();
 
@@ -52,7 +54,7 @@ public class FileMetadataService {
     }
 
     /**
-     * Удаляет метаданные файла и обновляет статус загрузки пользователя.
+     * Удаляет метаданные файла и обновляет статус загрузки пользователя если он не является Админом.
      * <p>
      * Сбрасывает статус пользователя на NOT_UPLOADED, позволяя загружать новые файлы.
      *
@@ -80,11 +82,15 @@ public class FileMetadataService {
         }
     }
 
+    @Transactional
+    public void updateScanStatus(String uniqueName, ScanStatus status) {
+        FileMetadata file = findByUniqueName(uniqueName);
+        file.setScanStatus(status);
+        fileMetadataRepository.save(file);
+    }
+
     public FileMetadata findByUniqueName(String uniqueFileName) {
         return fileMetadataRepository.findByUniqueName(uniqueFileName)
-                .orElseThrow(() -> {
-            log.warn("File not found: {}", uniqueFileName);
-            return new FileNotFoundException(uniqueFileName);
-        });
+                .orElseThrow(() -> new FileNotFoundException(uniqueFileName));
     }
 }

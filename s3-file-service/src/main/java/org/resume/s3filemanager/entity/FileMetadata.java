@@ -1,13 +1,12 @@
 package org.resume.s3filemanager.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.resume.common.model.ScanStatus;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,6 +30,10 @@ public class FileMetadata {
 
     @Column(length = 64, nullable = false, unique = true)
     private String fileHash;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ScanStatus scanStatus = ScanStatus.PENDING_SCAN;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
