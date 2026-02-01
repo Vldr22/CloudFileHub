@@ -1,5 +1,7 @@
 package org.resume.s3filemanager.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.resume.s3filemanager.constant.SuccessMessages;
 import org.resume.s3filemanager.dto.CommonResponse;
@@ -29,6 +31,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/files")
 @RequiredArgsConstructor
+@Tag(name = "Files", description = "Загрузка, скачивание и удаление файлов")
 public class FileController {
 
     private final FileFacadeService fileFacadeService;
@@ -42,6 +45,7 @@ public class FileController {
      * @param file загружаемый файл с валидацией типа
      * @return сообщение об успешной загрузке
      */
+    @Operation(summary = "Загрузить файл", description = "Загружает один файл. Обычные пользователи — только 1 файл, админы — без ограничений")
     @PostMapping("/upload")
     @ResponseStatus(HttpStatus.CREATED)
     public CommonResponse<String> upload (@RequestParam("file")
@@ -59,6 +63,7 @@ public class FileController {
      * @param files массив загружаемых файлов
      * @return список результатов для каждого файла (SUCCESS или ERROR)
      */
+    @Operation(summary = "Множественная загрузка", description = "Загружает до 5 файлов. Только для администраторов")
     @PostMapping("/multiple-upload")
     @ResponseStatus(HttpStatus.CREATED)
     public CommonResponse<List<MultipleUploadResponse>> multipleUpload(@RequestParam("files")
@@ -75,6 +80,7 @@ public class FileController {
      * @param uniqueName уникальное имя файла (UUID-based)
      * @return файл с корректными заголовками для скачивания
      */
+    @Operation(summary = "Скачать файл", description = "Скачивает файл по уникальному имени")
     @GetMapping("/{uniqueName}")
     public ResponseEntity<ByteArrayResource> download(@PathVariable String uniqueName) {
 
@@ -98,6 +104,7 @@ public class FileController {
      *
      * @param uniqueName уникальное имя файла (UUID-based)
      */
+    @Operation(summary = "Удалить файл", description = "Удаляет файл по уникальному имени. Пользователи — только свои, админы — любые")
     @DeleteMapping("/{uniqueName}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String uniqueName) {

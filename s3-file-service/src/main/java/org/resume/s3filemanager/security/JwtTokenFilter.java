@@ -49,7 +49,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private static final String[] PUBLIC_PATHS = {
             "/api/auth/login",
             "/api/auth/register",
-            "/api/home"
+            "/api/home",
+            "/swagger-ui",
+            "/v3/api-docs"
     };
 
     /**

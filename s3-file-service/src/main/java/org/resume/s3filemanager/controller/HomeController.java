@@ -1,5 +1,7 @@
 package org.resume.s3filemanager.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.resume.s3filemanager.dto.FileResponse;
 import org.resume.s3filemanager.service.file.FilePaginationService;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/home")
 @RequiredArgsConstructor
+@Tag(name = "Home", description = "Домашняя страница. Публичный доступ к списку файлов")
 public class HomeController {
 
     private final FilePaginationService filePaginationService;
@@ -33,6 +36,7 @@ public class HomeController {
      * @param pageable параметры пагинации (по умолчанию: page=0, size из конфигурации)
      * @return страница с метаданными файлов
      */
+    @Operation(summary = "Список файлов", description = "Постраничный список всех файлов без аутентификации")
     @GetMapping()
     public Page<FileResponse> getFiles(Pageable pageable) {
         return filePaginationService.paginate(pageable);
