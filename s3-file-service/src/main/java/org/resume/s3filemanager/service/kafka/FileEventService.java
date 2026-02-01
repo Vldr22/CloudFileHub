@@ -40,4 +40,14 @@ public class FileEventService {
         log.debug("File upload event published: fileId={}, s3Key={}",
                 fileMetadata.getId(), fileMetadata.getUniqueName());
     }
+
+    /**
+     * Публикует событие о загрузке файла.
+     * Извлекает userId из связанной сущности User.
+     *
+     * @param fileMetadata метаданные файла
+     */
+    public void publishFileUploadEvent(FileMetadata fileMetadata) {
+        publishFileUploadEvent(fileMetadata, fileMetadata.getUser().getId());
+    }
 }

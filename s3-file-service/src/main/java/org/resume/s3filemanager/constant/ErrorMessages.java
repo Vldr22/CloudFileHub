@@ -37,4 +37,7 @@ public class ErrorMessages {
     public static final String INSUFFICIENT_PERMISSIONS = "Insufficient permissions";
     public static final String AUTHENTICATION_REQUIRED = "Authentication required";
     public static final String UNEXPECTED_ERROR = "An unexpected error occurred. Please try again later";
+
+    // Kafka
+    public static final String DLT_RETRY_FAILED =  "Retry доступен только для файлов со статусом ERROR";
 }
