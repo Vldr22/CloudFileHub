@@ -12,6 +12,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FileScanResult {
+    private Long fileId;
     private String s3Key;
     private ScanStatus status;
     private String virusName;

@@ -20,7 +20,6 @@ public class FilePaginationService {
     private final FileMetadataRepository fileMetadataRepository;
     private final static String MB_SUFFIX = " MB";
 
-
     /**
      * Возвращает постраничный список файлов с метаданными.
      *
@@ -37,7 +36,7 @@ public class FilePaginationService {
                         .build());
     }
 
-    private String convertToMB(long bytes) {
+    public static String convertToMB(long bytes) {
         double mb = bytes / 1_048_576.0;
         return String.format("%.2f", mb) + MB_SUFFIX;
     }
