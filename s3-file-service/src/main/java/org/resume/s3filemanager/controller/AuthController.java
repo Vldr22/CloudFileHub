@@ -1,5 +1,7 @@
 package org.resume.s3filemanager.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name = "Auth", description = "Регистрация, вход и выход из системы")
 public class AuthController {
 
     private final AuthService authService;
@@ -35,6 +38,7 @@ public class AuthController {
      * @param response HTTP ответ для установки cookie с токеном
      * @return информация о пользователе и токен
      */
+    @Operation(summary = "Войти в систему", description = "Проверяет данные и устанавливает JWT Token в cookie")
     @PostMapping("/login")
     public CommonResponse<LoginResponse> login(@Valid @RequestBody AuthRequest request, HttpServletResponse response) {
         LoginResponse loginResponse = authService.login(request, response);
@@ -49,6 +53,7 @@ public class AuthController {
      * @param request данные для регистрации (username, password)
      * @return сообщение об успешной регистрации
      */
+    @Operation(summary = "Регистрация", description = "Создаёт нового пользователя с ролью USER")
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public CommonResponse<String> register(@Valid @RequestBody AuthRequest request) {
@@ -64,6 +69,7 @@ public class AuthController {
      * @param response HTTP ответ для очистки cookie
      * @return сообщение об успешном выходе
      */
+    @Operation(summary = "Выйти из системы", description = "Удаляет токен из whitelist и очищает cookie")
     @PostMapping("/logout")
     public CommonResponse<String> logout(HttpServletResponse response) {
         authService.logout(response);

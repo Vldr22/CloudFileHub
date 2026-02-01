@@ -1,5 +1,7 @@
 package org.resume.s3filemanager.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.resume.common.model.ScanStatus;
 import org.resume.s3filemanager.audit.AuditOperation;
@@ -27,6 +29,7 @@ import java.time.Instant;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
+@Tag(name = "Admin", description = "Администрирование пользователями, файлами и логами")
 public class AdminController {
 
     private final AdminUserService adminUserService;
@@ -45,6 +48,7 @@ public class AdminController {
      * @param pageable параметры пагинации
      * @return страница с записями аудита
      */
+    @Operation(summary = "Журнал аудита", description = "Возвращает логи с фильтрацией по пользователю, операции, статусу и дате")
     @GetMapping("/audit-logs")
     public Page<AuditLogResponse> getAuditLogs(
             @RequestParam(required = false) String username,
@@ -64,6 +68,7 @@ public class AdminController {
      * @param pageable параметры пагинации (page, size, sort)
      * @return страница с информацией о пользователях
      */
+    @Operation(summary = "Список пользователей", description = "Возвращает всех пользователей с пагинацией")
     @GetMapping("/users")
     public Page<UserDetailsResponse> getUsers(Pageable pageable) {
         return adminUserService.getUsers(pageable);
@@ -77,6 +82,7 @@ public class AdminController {
      * @param status новый статус (ACTIVE, BLOCKED)
      * @return обновлённая информация о пользователе
      */
+    @Operation(summary = "Изменить статус пользователя", description = "Меняет статус (ACTIVE/BLOCKED). При блокировке инвалидирует токен")
     @PutMapping("/users/{userId}/status")
     public CommonResponse<UserDetailsResponse> changeUserStatus(
             @PathVariable Long userId,
@@ -92,6 +98,7 @@ public class AdminController {
      * @param uploadStatus новый статус (UNLIMITED, NOT_UPLOADED, FILE_UPLOADED)
      * @return обновлённая информация о пользователе
      */
+    @Operation(summary = "Изменить статус загрузки", description = "Меняет лимит загрузки файлов (UNLIMITED/NOT_UPLOADED/FILE_UPLOADED)")
     @PutMapping("/users/{userId}/file-upload-status")
     public CommonResponse<UserDetailsResponse> changeUserFileUploadStatus(
             @PathVariable Long userId,
@@ -106,6 +113,7 @@ public class AdminController {
      *
      * @param userId ID пользователя
      */
+    @Operation(summary = "Удалить пользователя", description = "Удаляет пользователя и инвалидирует его токен")
     @DeleteMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Long userId) {
@@ -119,6 +127,7 @@ public class AdminController {
      * @param pageable параметры пагинации
      * @return страница с информацией о файлах
      */
+    @Operation(summary = "Файлы по статусу сканирования", description = "Возвращает файлы с указанным статусом (PENDING_SCAN/CLEAN/INFECTED/ERROR)")
     @GetMapping("/files/scan-status")
     public Page<AdminFileResponse> getFilesByScanStatus(
             @RequestParam ScanStatus scanStatus,
@@ -132,6 +141,7 @@ public class AdminController {
      *
      * @return количество переотправленных сообщений
      */
+    @Operation(summary = "Повторить обработку DLT", description = "Переотправляет все сообщения из Dead Letter Topic для файлов со статусом ERROR")
     @PostMapping("/files/retry-dlt")
     public CommonResponse<Integer> retryDlt() {
         Integer result = retryDLTService.retryFailedEvents();
@@ -145,6 +155,7 @@ public class AdminController {
      * @param fileId ID файла
      * @return обновлённая информация о файле
      */
+    @Operation(summary = "Повторить сканирование файла", description = "Отправляет файл на повторное сканирование. Только для статуса ERROR")
     @PostMapping("/files/{fileId}/retry-scan")
     public CommonResponse<AdminFileResponse> retryScan(@PathVariable Long fileId) {
         AdminFileResponse result = adminFileService.retryScan(fileId);
@@ -156,6 +167,7 @@ public class AdminController {
      *
      * @return количество файлов по каждому статусу
      */
+    @Operation(summary = "Статистика файлов", description = "Количество файлов по каждому статусу сканирования")
     @GetMapping("/files/stats")
     public CommonResponse<FileStatsResponse> getFileStats() {
         FileStatsResponse stats = adminFileService.getFileStats();
@@ -164,10 +176,13 @@ public class AdminController {
 
     /**
      * Удаляет все файлы с указанным статусом сканирования.
+     * Для INFECTED — только метаданные (S3 уже очищен).
+     * Для остальных — удаляет и из S3, и метаданные.
      *
-     * @param scanStatus статус для удаления (INFECTED, ERROR)
+     * @param scanStatus статус для удаления (INFECTED, ERROR, CLEAR, PENDING_SCAN)
      * @return количество удалённых записей
      */
+    @Operation(summary = "Удалить файлы по статусу", description = "Для INFECTED — только метаданные (S3 уже очищен). Для остальных — удаляет и из S3, и метаданные")
     @DeleteMapping("/files/scan-status")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public CommonResponse<Integer> deleteFilesByScanStatus(@RequestParam ScanStatus scanStatus) {
