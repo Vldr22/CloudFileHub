@@ -1,4 +1,7 @@
-# === ClamAV (local) ===
+spring:
+  kafka:
+    bootstrap-servers: localhost:29092
+
 clamav:
   host: localhost
   port: 3310

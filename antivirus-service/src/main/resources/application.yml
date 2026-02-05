@@ -8,7 +8,6 @@ spring:
 
   # === Kafka Configuration ===
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -32,11 +31,6 @@ yandex:
     region: ru-central1
     bucketName: first-aws-bucket
 
-# === ClamAV ===
-clamav:
-  host: ${CLAMAV_HOST:localhost}
-  port: ${CLAMAV_PORT:3310}
-
 # === Kafka Topics ===
 kafka:
   topics:
@@ -44,7 +38,7 @@ kafka:
     file-scan-results: file-scan-results
     file-upload-events-dlt: file-upload-events.DLT
   retry:
-    max-attempts: 3         #Кол-во попыток
+    max-attempts: 3         # Кол-во попыток
     backoff-delay: 10000    # 10 секунд — начальная задержка
     multiplier: 2.0         # Множитель: 10s → 20s → 40s
     max-interval: 60000     # 60 секунд — максимальная задержка

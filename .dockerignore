@@ -1,0 +1,19 @@
+# IDE
+**/.idea
+**/.git
+**/*.iml
+
+# Build (кроме jar)
+**/target/classes
+**/target/test-classes
+**/target/maven-status
+**/target/generated-sources
+
+# Temp
+*.swp
+*.swo
+*.tmp
+*.log
+
+# Environment
+.env

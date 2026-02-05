@@ -31,6 +31,7 @@ public class FileMetadata {
     @Column(length = 64, nullable = false, unique = true)
     private String fileHash;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ScanStatus scanStatus = ScanStatus.PENDING_SCAN;
