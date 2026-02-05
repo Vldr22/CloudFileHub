@@ -1,0 +1,24 @@
+# Network
+TCPSocket 3310
+TCPAddr 0.0.0.0
+
+# Run as root inside container (necessary for docker)
+Foreground yes
+
+# Performance
+MaxThreads 2
+MaxQueue 10
+IdleTimeout 60
+
+# Limits
+MaxScanSize 100M
+MaxFileSize 50M
+MaxRecursion 10
+MaxFiles 1000
+
+# Logging
+LogTime yes
+LogVerbose no
+
+# Database
+DatabaseDirectory /var/lib/clamav

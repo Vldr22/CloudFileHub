@@ -1,7 +1,11 @@
+spring:
+  kafka:
+    bootstrap-servers: kafka:9092
+
 # === ClamAV (production) ===
 clamav:
-  host: ${CLAMAV_HOST}
-  port: ${CLAMAV_PORT}
+  host: clamav
+  port: 3310
 
 # === Logging (minimal) ===
 logging:

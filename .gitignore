@@ -37,3 +37,7 @@ build/
 
 ### Logs ###
 *.log
+
+### Docker ###
+scripts/*.sh~
+scripts/*.sh.docker-temp
