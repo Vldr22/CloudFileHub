@@ -38,7 +38,7 @@
 - **Rate limiting** — Nginx (auth: 5r/min, upload: 2r/s, api: 10r/s)
 
 **Доступ:**
-- API: http://localhost:8000/home
+- API: http://localhost:8000/api/home
 - Swagger UI: http://localhost:8000/swagger-ui/index.html
 - Kafka UI: http://localhost:8000/kafka-ui/
 
