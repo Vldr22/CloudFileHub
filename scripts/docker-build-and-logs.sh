@@ -2,7 +2,7 @@
 # Универсальный скрипт для управления проектом CloudFileHub
 
 CUR_DIR=$(pwd)
-PROJECT_DIR="/home/vldr2212/IdeaProjects/CloudFileHub"
+PROJECT_DIR="$(dirname "$0")/.."
 
 CONTAINERS=("s3-file-service" "antivirus-service" "cloudfilehub-clamav")
 
@@ -26,7 +26,7 @@ while true; do
         1)
             echo "=== Сборка Maven проектов ==="
             cd "$PROJECT_DIR" || { echo "Не удалось перейти в папку проекта"; continue; }
-            mvn clean package -DskipTests
+            ./mvnw clean package -DskipTests
 
             echo "=== Сборка Docker образов ==="
             docker compose build
