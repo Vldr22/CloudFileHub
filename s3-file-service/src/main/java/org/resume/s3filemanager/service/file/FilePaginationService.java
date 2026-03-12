@@ -1,6 +1,7 @@
 package org.resume.s3filemanager.service.file;
 
 import lombok.RequiredArgsConstructor;
+import org.resume.common.model.ScanStatus;
 import org.resume.s3filemanager.dto.FileResponse;
 import org.resume.s3filemanager.entity.FileMetadata;
 import org.resume.s3filemanager.repository.FileMetadataRepository;
@@ -27,7 +28,7 @@ public class FilePaginationService {
      * @return страница с информацией о файлах
      */
     public Page<FileResponse> paginate(Pageable pageable) {
-        Page<FileMetadata> fileMetadataPage = fileMetadataRepository.findAll(pageable);
+        Page<FileMetadata> fileMetadataPage = fileMetadataRepository.findByScanStatus(ScanStatus.CLEAN, pageable);
         return fileMetadataPage.map(
                 file -> FileResponse.builder()
                         .fileName(file.getOriginalName())
