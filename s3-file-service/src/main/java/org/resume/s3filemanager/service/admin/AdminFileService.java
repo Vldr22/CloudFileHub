@@ -3,11 +3,11 @@ package org.resume.s3filemanager.service.admin;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.resume.common.model.ScanStatus;
-import org.resume.s3filemanager.constant.ErrorMessages;
 import org.resume.s3filemanager.dto.AdminFileResponse;
 import org.resume.s3filemanager.dto.FileStatsResponse;
 import org.resume.s3filemanager.entity.FileMetadata;
 import org.resume.s3filemanager.exception.FileNotFoundException;
+import org.resume.s3filemanager.exception.InvalidScanStatusException;
 import org.resume.s3filemanager.repository.FileMetadataRepository;
 import org.resume.s3filemanager.service.file.YandexStorageService;
 import org.resume.s3filemanager.service.kafka.FileEventService;
@@ -51,7 +51,7 @@ public class AdminFileService {
                 .orElseThrow(() -> new FileNotFoundException(fileId.toString()));
 
         if (file.getScanStatus() != ScanStatus.ERROR) {
-            throw new IllegalStateException(ErrorMessages.DLT_RETRY_FAILED);
+            throw new InvalidScanStatusException(file.getScanStatus());
         }
 
         file.setScanStatus(ScanStatus.PENDING_SCAN);

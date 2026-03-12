@@ -1,6 +1,9 @@
 package org.resume.s3filemanager.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.resume.common.model.ScanStatus;
@@ -37,156 +40,142 @@ public class AdminController {
     private final AdminFileService adminFileService;
     private final RetryDLTService retryDLTService;
 
-    /**
-     * Возвращает журнал аудита с фильтрацией и пагинацией.
-     *
-     * @param username имя пользователя (опционально)
-     * @param operation тип операции (опционально)
-     * @param status статус операции (опционально)
-     * @param from начало диапазона (опционально)
-     * @param to конец диапазона (опционально)
-     * @param pageable параметры пагинации
-     * @return страница с записями аудита
-     */
     @Operation(summary = "Журнал аудита", description = "Возвращает логи с фильтрацией по пользователю, операции, статусу и дате")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Успешно"),
+            @ApiResponse(responseCode = "401", description = "Токен отсутствует или истёк"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав")
+    })
+    @Parameter(name = "page", description = "Номер страницы", example = "0")
+    @Parameter(name = "size", description = "Размер страницы", example = "20")
     @GetMapping("/audit-logs")
     public Page<AuditLogResponse> getAuditLogs(
-            @RequestParam(required = false) String username,
-            @RequestParam(required = false) AuditOperation operation,
-            @RequestParam(required = false) CommonResponseStatus status,
-            @RequestParam(required = false) Instant from,
-            @RequestParam(required = false) Instant to,
-            Pageable pageable) {
-
+            @Parameter(description = "Имя пользователя", example = "john_doe") @RequestParam(required = false) String username,
+            @Parameter(description = "Тип операции", example = "FILE_UPLOAD") @RequestParam(required = false) AuditOperation operation,
+            @Parameter(description = "Статус операции", example = "SUCCESS") @RequestParam(required = false) CommonResponseStatus status,
+            @Parameter(description = "Начало периода", example = "2026-03-11T03:41:17.639342344") @RequestParam(required = false) Instant from,
+            @Parameter(description = "Конец периода", example = "2026-03-11T03:41:17.639342344") @RequestParam(required = false) Instant to,
+            @Parameter(hidden = true) Pageable pageable) {
         AuditLogFilterRequest filter = new AuditLogFilterRequest(username, operation, status, from, to);
         return adminAuditService.getAuditLogs(filter, pageable);
     }
 
-    /**
-     * Возвращает список всех пользователей с пагинацией.
-     *
-     * @param pageable параметры пагинации (page, size, sort)
-     * @return страница с информацией о пользователях
-     */
     @Operation(summary = "Список пользователей", description = "Возвращает всех пользователей с пагинацией")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Успешно"),
+            @ApiResponse(responseCode = "401", description = "Токен отсутствует или истёк"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав")
+    })
+    @Parameter(name = "page", description = "Номер страницы", example = "0")
+    @Parameter(name = "size", description = "Размер страницы", example = "20")
     @GetMapping("/users")
-    public Page<UserDetailsResponse> getUsers(Pageable pageable) {
+    public Page<UserDetailsResponse> getUsers(@Parameter(hidden = true) Pageable pageable) {
         return adminUserService.getUsers(pageable);
     }
 
-    /**
-     * Изменяет статус пользователя.
-     * При блокировке автоматически инвалидирует токен.
-     *
-     * @param userId ID пользователя
-     * @param status новый статус (ACTIVE, BLOCKED)
-     * @return обновлённая информация о пользователе
-     */
     @Operation(summary = "Изменить статус пользователя", description = "Меняет статус (ACTIVE/BLOCKED). При блокировке инвалидирует токен")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Статус изменён"),
+            @ApiResponse(responseCode = "401", description = "Токен отсутствует или истёк"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав"),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+    })
     @PutMapping("/users/{userId}/status")
     public CommonResponse<UserDetailsResponse> changeUserStatus(
-            @PathVariable Long userId,
-            @RequestParam UserStatus status) {
-        UserDetailsResponse result = adminUserService.changeStatus(userId, status);
-        return CommonResponse.success(result);
+            @Parameter(description = "ID пользователя", example = "1") @PathVariable Long userId,
+            @Parameter(description = "Новый статус", example = "BLOCKED") @RequestParam UserStatus status) {
+        return CommonResponse.success(adminUserService.changeStatus(userId, status));
     }
 
-    /**
-     * Изменяет статус загрузки файлов пользователя.
-     *
-     * @param userId ID пользователя
-     * @param uploadStatus новый статус (UNLIMITED, NOT_UPLOADED, FILE_UPLOADED)
-     * @return обновлённая информация о пользователе
-     */
     @Operation(summary = "Изменить статус загрузки", description = "Меняет лимит загрузки файлов (UNLIMITED/NOT_UPLOADED/FILE_UPLOADED)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Статус изменён"),
+            @ApiResponse(responseCode = "401", description = "Токен отсутствует или истёк"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав"),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+    })
     @PutMapping("/users/{userId}/file-upload-status")
     public CommonResponse<UserDetailsResponse> changeUserFileUploadStatus(
-            @PathVariable Long userId,
-            @RequestParam FileUploadStatus uploadStatus) {
-        UserDetailsResponse result = adminUserService.changeFileUploadStatus(userId, uploadStatus);
-        return CommonResponse.success(result);
+            @Parameter(description = "ID пользователя", example = "1") @PathVariable Long userId,
+            @Parameter(description = "Новый статус загрузки", example = "UNLIMITED") @RequestParam FileUploadStatus uploadStatus) {
+        return CommonResponse.success(adminUserService.changeFileUploadStatus(userId, uploadStatus));
     }
 
-    /**
-     * Удаляет пользователя из системы.
-     * Автоматически инвалидирует токен.
-     *
-     * @param userId ID пользователя
-     */
     @Operation(summary = "Удалить пользователя", description = "Удаляет пользователя и инвалидирует его токен")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Пользователь удалён"),
+            @ApiResponse(responseCode = "401", description = "Токен отсутствует или истёк"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав"),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+    })
     @DeleteMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable Long userId) {
+    public void deleteUser(
+            @Parameter(description = "ID пользователя", example = "1") @PathVariable Long userId) {
         adminUserService.deleteUser(userId);
     }
 
-    /**
-     * Возвращает список файлов по статусу сканирования.
-     *
-     * @param scanStatus статус сканирования (PENDING_SCAN, CLEAN, INFECTED, ERROR)
-     * @param pageable параметры пагинации
-     * @return страница с информацией о файлах
-     */
     @Operation(summary = "Файлы по статусу сканирования", description = "Возвращает файлы с указанным статусом (PENDING_SCAN/CLEAN/INFECTED/ERROR)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Успешно"),
+            @ApiResponse(responseCode = "401", description = "Токен отсутствует или истёк"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав")
+    })
+    @Parameter(name = "page", description = "Номер страницы", example = "0")
+    @Parameter(name = "size", description = "Размер страницы", example = "20")
     @GetMapping("/files/scan-status")
     public Page<AdminFileResponse> getFilesByScanStatus(
-            @RequestParam ScanStatus scanStatus,
-            Pageable pageable) {
+            @Parameter(description = "Статус сканирования", example = "CLEAN") @RequestParam ScanStatus scanStatus,
+            @Parameter(hidden = true) Pageable pageable) {
         return adminFileService.findAllByScanStatus(scanStatus, pageable);
     }
 
-    /**
-     * Повторно обрабатывает все сообщения из Dead Letter Topic.
-     * Retry выполняется только для файлов со статусом ERROR.
-     *
-     * @return количество переотправленных сообщений
-     */
     @Operation(summary = "Повторить обработку DLT", description = "Переотправляет все сообщения из Dead Letter Topic для файлов со статусом ERROR")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Сообщения переотправлены"),
+            @ApiResponse(responseCode = "401", description = "Токен отсутствует или истёк"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав")
+    })
     @PostMapping("/files/retry-dlt")
     public CommonResponse<Integer> retryDlt() {
-        Integer result = retryDLTService.retryFailedEvents();
-        return CommonResponse.success(result);
+        return CommonResponse.success(retryDLTService.retryFailedEvents());
     }
 
-    /**
-     * Повторно отправляет файл на сканирование.
-     * Доступно только для файлов со статусом ERROR.
-     *
-     * @param fileId ID файла
-     * @return обновлённая информация о файле
-     */
     @Operation(summary = "Повторить сканирование файла", description = "Отправляет файл на повторное сканирование. Только для статуса ERROR")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Файл отправлен на сканирование"),
+            @ApiResponse(responseCode = "400", description = "Файл не в статусе ERROR"),
+            @ApiResponse(responseCode = "401", description = "Токен отсутствует или истёк"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав"),
+            @ApiResponse(responseCode = "404", description = "Файл не найден")
+    })
     @PostMapping("/files/{fileId}/retry-scan")
-    public CommonResponse<AdminFileResponse> retryScan(@PathVariable Long fileId) {
-        AdminFileResponse result = adminFileService.retryScan(fileId);
-        return CommonResponse.success(result);
+    public CommonResponse<AdminFileResponse> retryScan(
+            @Parameter(description = "ID файла", example = "1") @PathVariable Long fileId) {
+        return CommonResponse.success(adminFileService.retryScan(fileId));
     }
 
-    /**
-     * Возвращает статистику файлов по статусам сканирования.
-     *
-     * @return количество файлов по каждому статусу
-     */
     @Operation(summary = "Статистика файлов", description = "Количество файлов по каждому статусу сканирования")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Успешно"),
+            @ApiResponse(responseCode = "401", description = "Токен отсутствует или истёк"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав")
+    })
     @GetMapping("/files/stats")
     public CommonResponse<FileStatsResponse> getFileStats() {
-        FileStatsResponse stats = adminFileService.getFileStats();
-        return CommonResponse.success(stats);
+        return CommonResponse.success(adminFileService.getFileStats());
     }
 
-    /**
-     * Удаляет все файлы с указанным статусом сканирования.
-     * Для INFECTED — только метаданные (S3 уже очищен).
-     * Для остальных — удаляет и из S3, и метаданные.
-     *
-     * @param scanStatus статус для удаления (INFECTED, ERROR, CLEAR, PENDING_SCAN)
-     * @return количество удалённых записей
-     */
     @Operation(summary = "Удалить файлы по статусу", description = "Для INFECTED — только метаданные (S3 уже очищен). Для остальных — удаляет и из S3, и метаданные")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Файлы удалены"),
+            @ApiResponse(responseCode = "401", description = "Токен отсутствует или истёк"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав")
+    })
     @DeleteMapping("/files/scan-status")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public CommonResponse<Integer> deleteFilesByScanStatus(@RequestParam ScanStatus scanStatus) {
-        int deleted = adminFileService.deleteAllByScanStatus(scanStatus);
-        return CommonResponse.success(deleted);
+    public CommonResponse<Integer> deleteFilesByScanStatus(
+            @Parameter(description = "Статус сканирования", example = "INFECTED") @RequestParam ScanStatus scanStatus) {
+        return CommonResponse.success(adminFileService.deleteAllByScanStatus(scanStatus));
     }
 }

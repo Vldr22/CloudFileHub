@@ -1,6 +1,10 @@
 package org.resume.s3filemanager.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.resume.s3filemanager.dto.FileResponse;
@@ -27,18 +31,16 @@ public class HomeController {
 
     private final FilePaginationService filePaginationService;
 
-    /**
-     * Возвращает постраничный список файлов.
-     * <p>
-     * Доступен без аутентификации. Параметры пагинации
-     * передаются через query параметры (page, size, sort).
-     *
-     * @param pageable параметры пагинации (по умолчанию: page=0, size из конфигурации)
-     * @return страница с метаданными файлов
-     */
     @Operation(summary = "Список файлов", description = "Постраничный список всех файлов без аутентификации")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Успешно"),
+            @ApiResponse(responseCode = "400", description = "Неверные параметры пагинации")
+    })
+    @Parameter(name = "page", description = "Номер страницы", example = "0")
+    @Parameter(name = "size", description = "Размер страницы", example = "20")
+    @SecurityRequirements
     @GetMapping()
-    public Page<FileResponse> getFiles(Pageable pageable) {
+    public Page<FileResponse> getFiles(@Parameter(hidden = true) Pageable pageable) {
         return filePaginationService.paginate(pageable);
     }
 }

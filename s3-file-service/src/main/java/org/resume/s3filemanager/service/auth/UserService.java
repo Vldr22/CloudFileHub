@@ -2,6 +2,7 @@ package org.resume.s3filemanager.service.auth;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.resume.s3filemanager.constant.SecurityErrorMessages;
 import org.resume.s3filemanager.entity.User;
 import org.resume.s3filemanager.enums.FileUploadStatus;
 import org.resume.s3filemanager.enums.UserRole;
@@ -11,6 +12,7 @@ import org.resume.s3filemanager.exception.UserNotFoundException;
 import org.resume.s3filemanager.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,6 +73,18 @@ public class UserService {
                     log.warn("User not found: {}", username);
                     return new UserNotFoundException(username);
                 });
+    }
+
+    /**
+     * Находит пользователя по имени.
+     *
+     * @param username имя пользователя для поиска
+     * @return найденный пользователь
+     * @throws BadCredentialsException если пользователь не найден для обеспечения безопасности
+     */
+    public User findByUsernameForAuth(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new BadCredentialsException(SecurityErrorMessages.INVALID_CREDENTIALS));
     }
 
     /**

@@ -108,6 +108,12 @@ public class GlobalExceptionHandler {
         return createErrorResponse(HttpStatus.FORBIDDEN, e.getMessage());
     }
 
+    @ExceptionHandler(InvalidScanStatusException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public CommonResponse<Void> handleInvalidScanStatus(InvalidScanStatusException e) {
+        return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
     // ========== TECHNICAL EXCEPTIONS  ==========
     @ExceptionHandler(FileReadException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
