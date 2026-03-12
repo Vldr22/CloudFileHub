@@ -1,6 +1,9 @@
 package org.resume.s3filemanager.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -29,31 +32,26 @@ public class AuthController {
 
     private final AuthService authService;
 
-    /**
-     * Авторизует пользователя в системе.
-     * <p>
-     * Проверяет учетные данные, генерирует JWT токен и устанавливает его в cookie.
-     *
-     * @param request данные для входа (username, password)
-     * @param response HTTP ответ для установки cookie с токеном
-     * @return информация о пользователе и токен
-     */
     @Operation(summary = "Войти в систему", description = "Проверяет данные и устанавливает JWT Token в cookie")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Успешный вход"),
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации"),
+            @ApiResponse(responseCode = "401", description = "Неверные учётные данные")
+    })
+    @SecurityRequirements
     @PostMapping("/login")
     public CommonResponse<LoginResponse> login(@Valid @RequestBody AuthRequest request, HttpServletResponse response) {
         LoginResponse loginResponse = authService.login(request, response);
         return CommonResponse.success(loginResponse);
     }
 
-    /**
-     * Регистрирует нового пользователя в системе.
-     * <p>
-     * Создает пользователя с ролью USER и статусом загрузки NOT_UPLOADED.
-     *
-     * @param request данные для регистрации (username, password)
-     * @return сообщение об успешной регистрации
-     */
     @Operation(summary = "Регистрация", description = "Создаёт нового пользователя с ролью USER")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Пользователь создан"),
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации"),
+            @ApiResponse(responseCode = "409", description = "Пользователь с таким именем уже зарегистрирован")
+    })
+    @SecurityRequirements
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public CommonResponse<String> register(@Valid @RequestBody AuthRequest request) {
@@ -61,15 +59,11 @@ public class AuthController {
         return CommonResponse.success(SuccessMessages.REGISTRATION_SUCCESS);
     }
 
-    /**
-     * Выполняет выход пользователя из системы.
-     * <p>
-     * Удаляет JWT токен из whitelist и очищает cookie.
-     *
-     * @param response HTTP ответ для очистки cookie
-     * @return сообщение об успешном выходе
-     */
     @Operation(summary = "Выйти из системы", description = "Удаляет токен из whitelist и очищает cookie")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Успешный выход"),
+            @ApiResponse(responseCode = "401", description = "Токен отсутствует или истёк")
+    })
     @PostMapping("/logout")
     public CommonResponse<String> logout(HttpServletResponse response) {
         authService.logout(response);

@@ -10,7 +10,6 @@ import org.resume.s3filemanager.constant.SecurityErrorMessages;
 import org.resume.s3filemanager.dto.AuthRequest;
 import org.resume.s3filemanager.dto.LoginResponse;
 import org.resume.s3filemanager.entity.User;
-import org.resume.s3filemanager.enums.UserRole;
 import org.resume.s3filemanager.enums.UserStatus;
 import org.resume.s3filemanager.exception.UserAlreadyExistsException;
 import org.resume.s3filemanager.exception.UserBlockedException;
@@ -58,7 +57,7 @@ public class AuthService {
      * @throws BadCredentialsException если учетные данные неверны
      */
     public LoginResponse login(AuthRequest request, HttpServletResponse response) {
-        User user = verifyCredentials(request.getUsername(), request.getPassword());
+        User user = verifyCredentials(request.username(), request.password());
 
         String token = jwtTokenService.generateToken(user.getUsername(), user.getRole());
 
@@ -84,8 +83,8 @@ public class AuthService {
      */
     @Auditable(operation = AuditOperation.REGISTER, resourceType = ResourceType.USER)
     public void register(AuthRequest request) {
-        userService.createUser(request.getUsername(), request.getPassword());
-        log.info("User registered successfully: {}", request.getUsername());
+        userService.createUser(request.username(), request.password());
+        log.info("User registered successfully: {}", request.username());
     }
 
     /**
@@ -105,7 +104,7 @@ public class AuthService {
     }
 
     private User verifyCredentials(String username, String password) {
-        User user = userService.findByUsername(username);
+        User user = userService.findByUsernameForAuth(username);
 
         if (user.getStatus() == UserStatus.BLOCKED) {
             log.warn("Blocked user attempted login: {}", username);

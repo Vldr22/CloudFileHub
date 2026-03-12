@@ -1,6 +1,10 @@
 package org.resume.s3filemanager.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.resume.s3filemanager.constant.SuccessMessages;
@@ -36,57 +40,52 @@ public class FileController {
 
     private final FileFacadeService fileFacadeService;
 
-    /**
-     * Загружает один файл (аутентифицированные пользователи).
-     * <p>
-     * Обычные пользователи могут загрузить только один файл (проверка статуса).
-     * Администраторы могут загружать неограниченно.
-     *
-     * @param file загружаемый файл с валидацией типа
-     * @return сообщение об успешной загрузке
-     */
     @Operation(summary = "Загрузить файл", description = "Загружает один файл. Обычные пользователи — только 1 файл, админы — без ограничений")
-    @PostMapping("/upload")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Файл загружен"),
+            @ApiResponse(responseCode = "400", description = "Неверный тип или формат файла"),
+            @ApiResponse(responseCode = "401", description = "Токен отсутствует или истёк"),
+            @ApiResponse(responseCode = "403", description = "Лимит загрузки исчерпан или пользователь заблокирован"),
+            @ApiResponse(responseCode = "409", description = "Файл уже существует"),
+            @ApiResponse(responseCode = "413", description = "Файл превышает 30MB")
+    })  @PostMapping("/upload")
     @ResponseStatus(HttpStatus.CREATED)
-    public CommonResponse<String> upload (@RequestParam("file")
-            @ValidFile MultipartFile file) {
+    public CommonResponse<String> upload (
+            @Parameter(description = "Файл для загрузки", required = true)
+            @RequestParam("file") @ValidFile MultipartFile file) {
         fileFacadeService.uploadFile(file);
         return CommonResponse.success(SuccessMessages.FILE_UPLOAD_SUCCESS);
     }
 
-    /**
-     * Загружает несколько файлов одновременно (только администраторы).
-     * <p>
-     * Реализует паттерн частичного успеха: валидные файлы загружаются,
-     * невалидные отклоняются с указанием причины. Максимум 5 файлов за раз.
-     *
-     * @param files массив загружаемых файлов
-     * @return список результатов для каждого файла (SUCCESS или ERROR)
-     */
     @Operation(summary = "Множественная загрузка", description = "Загружает до 5 файлов. Только для администраторов")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Хотя бы один файл загружен успешно (частичный успех возможен)"),
+            @ApiResponse(responseCode = "400", description = "Все файлы не прошли загрузку или превышен лимит файлов"),
+            @ApiResponse(responseCode = "401", description = "Токен отсутствует или истёк"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав")
+    })
     @PostMapping("/multiple-upload")
     @ResponseStatus(HttpStatus.CREATED)
-    public CommonResponse<List<MultipleUploadResponse>> multipleUpload(@RequestParam("files")
-                                        MultipartFile[] files) {
+    public CommonResponse<List<MultipleUploadResponse>> multipleUpload(
+            @Parameter(description = "Файлы для загрузки (до 5)", required = true)
+            @RequestParam("files") MultipartFile[] files) {
         List<MultipleUploadResponse> results = fileFacadeService.multipleUpload(files);
         return CommonResponse.success(results);
     }
 
-    /**
-     * Скачивает файл по уникальному имени.
-     * <p>
-     * Возвращает файл с оригинальным именем в заголовке Content-Disposition.
-     *
-     * @param uniqueName уникальное имя файла (UUID-based)
-     * @return файл с корректными заголовками для скачивания
-     */
     @Operation(summary = "Скачать файл", description = "Скачивает файл по уникальному имени")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Файл успешно скачан"),
+            @ApiResponse(responseCode = "404", description = "Файл не найден"),
+            @ApiResponse(responseCode = "500", description = "Ошибка S3")
+    })
+    @SecurityRequirements
     @GetMapping("/{uniqueName}")
-    public ResponseEntity<ByteArrayResource> download(@PathVariable String uniqueName) {
-
+    public ResponseEntity<ByteArrayResource> download(
+            @Parameter(description = "Уникальное имя файла", example = "212d7ce9-8451-4c4d-881e-d198593aa518.png")
+            @PathVariable String uniqueName) {
         FileDownloadResponse response = fileFacadeService.downloadFile(uniqueName);
         ByteArrayResource resource = new ByteArrayResource(response.getContent());
-
         return ResponseEntity
                 .ok()
                 .contentLength(response.getSize())
@@ -95,19 +94,18 @@ public class FileController {
                 .body(resource);
     }
 
-    /**
-     * Удаляет файл по уникальному имени.
-     * <p>
-     * Пользователи могут удалять только свои файлы.
-     * Администраторы могут удалять любые файлы.
-     * При удалении сбрасывается статус загрузки владельца.
-     *
-     * @param uniqueName уникальное имя файла (UUID-based)
-     */
     @Operation(summary = "Удалить файл", description = "Удаляет файл по уникальному имени. Пользователи — только свои, админы — любые")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Файл удалён"),
+            @ApiResponse(responseCode = "401", description = "Токен отсутствует или истёк"),
+            @ApiResponse(responseCode = "403", description = "Нет прав на удаление чужого файла"),
+            @ApiResponse(responseCode = "404", description = "Файл не найден")
+    })
     @DeleteMapping("/{uniqueName}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable String uniqueName) {
+    public void delete(
+            @Parameter(description = "Уникальное имя файла", example = "212d7ce9-8451-4c4d-881e-d198593aa518.png")
+            @PathVariable String uniqueName) {
         fileFacadeService.deleteFile(uniqueName);
     }
 }

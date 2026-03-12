@@ -2,6 +2,7 @@ package org.resume.s3filemanager.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,11 +15,19 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Общий формат ответа API")
 public class CommonResponse<T> {
 
+    @Schema(description = "Данные ответа")
     private T data;
+
+    @Schema(description = "Статус ответа", example = "SUCCESS")
     private CommonResponseStatus status;
+
+    @Schema(description = "Детали ошибки (только при ERROR)")
     private ProblemDetail problemDetail;
+
+    @Schema(description = "Время ответа", example = "2026-03-11T03:41:17.639342344")
     private LocalDateTime timestamp;
 
     public static <T> CommonResponse<T> success(T data) {
