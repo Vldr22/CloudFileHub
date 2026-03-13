@@ -42,6 +42,20 @@
 - Swagger UI: http://localhost:8000/swagger-ui/index.html
 - Kafka UI: http://localhost:8000/kafka-ui/
 
+## Тестирование
+
+Сервисный слой основного модуля `s3-file-service` покрыт unit и интеграционными тестами. JaCoCo собирает объединённый отчёт покрытия.
+
+- **Unit-тесты** — Mockito, запускаются через Maven Surefire
+- **Интеграционные тесты** — Testcontainers (PostgreSQL, Redis, Kafka, MinIO), запускаются через Maven Failsafe
+```bash
+mvn clean verify  # все тесты + отчёт покрытия
+```
+
+![JaCoCo Coverage](docs/images/jacoco-screen.png)
+
+Отчёт генерируется в `target/site/jacoco-merged/`.
+
 ## Быстрый старт
 ```bash
 git clone https://github.com/Vldr22/CloudFileHub.git
@@ -58,11 +72,12 @@ CloudFileHub/
 ├── common-kafka/         # Общие модели событий
 ├── docker-compose.yml
 ├── nginx.conf
-└── scripts/
+├── scripts/
+└── docs/
 ```
 ## Roadmap
 
-- [ ] Unit и integration тесты
+- [x] Unit и integration тесты
 - [ ] Email-уведомления о результатах сканирования
 - [ ] Деплой на VPS
 - [ ] Полнотекстовый поиск (Elasticsearch)
