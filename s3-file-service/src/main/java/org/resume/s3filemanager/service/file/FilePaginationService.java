@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
+
 /**
  * Сервис для постраничного получения списка файлов.
  * <p>
@@ -39,6 +41,6 @@ public class FilePaginationService {
 
     public static String convertToMB(long bytes) {
         double mb = bytes / 1_048_576.0;
-        return String.format("%.2f", mb) + MB_SUFFIX;
+        return String.format(Locale.US, "%.2f", mb) + MB_SUFFIX;
     }
 }
