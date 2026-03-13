@@ -1,0 +1,61 @@
+# === Test Profile ===
+spring:
+  config:
+    import: ""
+
+  datasource:
+    url: will-be-overridden-by-testcontainers
+    username: test
+    password: test
+
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  data:
+    redis:
+      host: will-be-overridden
+      port: 0
+      password: test
+
+  kafka:
+    bootstrap-servers: will-be-overridden
+    consumer:
+      auto-offset-reset: earliest
+
+yandex:
+  storage:
+    accessKey: minioadmin
+    secretKey: minioadmin
+    endpoint: http://localhost:9000
+    region: ru-central1
+    bucketName: test-bucket
+
+app:
+  jwt:
+    secretKey: xFy9XTEbsBAZ1tiabhO47dPgsaGPUQmRh6bhiINyfYA=
+    expiration: 86400
+
+  admin:
+    name: admin
+    password: admin123
+
+  security:
+    cookie-secure: false
+
+  cors:
+    allowed-origins: http://localhost:3000
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS,PATCH
+    allowed-headers: Content-Type,Authorization
+
+logging:
+  level:
+    root: WARN
+    org.resume.s3filemanager: INFO
+    org.testcontainers: WARN
+    com.github.dockerjava: WARN
