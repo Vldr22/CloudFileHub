@@ -17,7 +17,8 @@ public interface FileMetadataRepository extends JpaRepository<FileMetadata, Long
 
     boolean existsByFileHashAndUserId(String fileHash, Long userId);
 
-    Optional<FileMetadata> findByUniqueName(String uniqueName);
+    @Query("SELECT f FROM FileMetadata f JOIN FETCH f.user WHERE f.uniqueName = :uniqueName")
+    Optional<FileMetadata> findByUniqueName(@Param("uniqueName") String uniqueName);
 
     @Modifying
     @Transactional
