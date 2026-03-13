@@ -16,14 +16,14 @@
 ## Архитектура и технологии
 ```
 ┌─────────────┐     ┌──────────────────┐     ┌──────────────────┐
-│   Nginx     │────▶│  s3-file-service │────▶│  Yandex Object   │
-│   :8000     │     │  Swagger/OpenAPI │     │  Storage (S3)    │
-│  rate limit │     │  PostgreSQL 16   │     └──────────────────┘
-│    gzip     │     │  Redis 7 (JWT)   │
-└─────────────┘     └────────┬─────────┘
+│    Nginx    │────▶│  s3-file-service │────▶│  Yandex Object   │
+│  rate limit │     │  Swagger/OpenAPI │     │  Storage (S3)    │
+│    gzip     │     │  PostgreSQL 16   │     └──────────────────┘
+└─────────────┘     │  Redis 7 (JWT)   │
+                    └────────┬─────────┘
                        Kafka │
                     ┌────────▼─────────┐     ┌──────────────────┐
-                    │ antivirus-service│────▶│   ClamAV :3310   │  
+                    │ antivirus-service│────▶│      ClamAV      │  
                     │ retry + DLT      │     │   (files scan)   │
                     └──────────────────┘     └──────────────────┘
 ```
@@ -41,6 +41,10 @@
 - API: http://localhost:8000/api/home
 - Swagger UI: http://localhost:8000/swagger-ui/index.html
 - Kafka UI: http://localhost:8000/kafka-ui/
+
+## API документация
+![Swagger Overview](docs/images/swagger-title-screen.png)
+![Swagger Endpoints](docs/images/swagger-endpoints-screen.png)
 
 ## Тестирование
 
@@ -60,7 +64,7 @@ mvn clean verify  # все тесты + отчёт покрытия
 ```bash
 git clone https://github.com/Vldr22/CloudFileHub.git
 cd CloudFileHub
-cp .env.example .env  # заполнить переменные окружения
+cp .env.example .env                # заполнить переменные окружения
 ./scripts/docker-build-and-logs.sh  # 1) Собрать, 2) Поднять
 ```
 
