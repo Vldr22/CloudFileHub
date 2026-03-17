@@ -38,9 +38,9 @@
 - **Rate limiting** — Nginx (auth: 5r/min, upload: 2r/s, api: 10r/s)
 
 **Доступ:**
-- API: http://localhost:8000/api/home
-- Swagger UI: http://localhost:8000/swagger-ui/index.html
-- Kafka UI: http://localhost:8000/kafka-ui/
+- API: https://cloudfilehub.duckdns.org/api/home
+- Swagger UI: https://cloudfilehub.duckdns.org/swagger-ui/index.html
+- Kafka UI: https://cloudfilehub.duckdns.org/kafka-ui/
 
 ## API документация
 ![Swagger Overview](docs/images/swagger-title-screen.png)
@@ -67,6 +67,9 @@ cd CloudFileHub
 cp .env.example .env                # заполнить переменные окружения
 ./scripts/docker-build-and-logs.sh  # 1) Собрать, 2) Поднять
 ```
+- API: http://localhost:8000/api/home
+- Swagger UI: http://localhost:8000/swagger-ui/index.html
+- Kafka UI: http://localhost:8000/kafka-ui/
 
 ## Структура проекта
 ```
@@ -83,5 +86,5 @@ CloudFileHub/
 
 - [x] Unit и integration тесты
 - [ ] Email-уведомления о результатах сканирования
-- [ ] Деплой на VPS
+- [x] Деплой на VPS
 - [ ] Полнотекстовый поиск (Elasticsearch)
