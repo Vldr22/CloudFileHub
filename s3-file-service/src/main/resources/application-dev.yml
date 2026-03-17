@@ -31,6 +31,13 @@ app:
     allowed-methods: GET,POST,PUT,DELETE,OPTIONS,PATCH
     allowed-headers: Content-Type,Authorization
 
+  swagger:
+    servers:
+      - url: http://localhost:8000
+        description: Local Docker (Nginx)
+      - url: http://localhost:8080
+        description: Local Direct
+
 # === Logging (verbose) ===
 logging:
   level:
@@ -39,9 +46,3 @@ logging:
     org.springframework.transaction: DEBUG
     org.springframework.jdbc.datasource: DEBUG
 
-springdoc:
-  servers:
-    - url: http://localhost:8000
-      description: Local Docker (Nginx)
-    - url: http://localhost:8080
-      description: Local Direct

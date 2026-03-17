@@ -31,6 +31,11 @@ app:
     allowed-methods: GET,POST,PUT,DELETE,OPTIONS,PATCH
     allowed-headers: Content-Type,Authorization
 
+  swagger:
+    servers:
+      - url: https://cloudfilehub.duckdns.org
+        description: Production (VPS)
+
 # === Logging (minimal) ===
 logging:
   level:
@@ -38,9 +43,3 @@ logging:
     org.resume.s3filemanager: INFO
     org.springframework.security: WARN
 
-springdoc:
-  servers:
-    - url: https://cloudfilehub.duckdns.org
-      description: Production (VPS)
-    - url: http://localhost:8000
-      description: Local Docker (Nginx)

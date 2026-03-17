@@ -6,7 +6,11 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.resume.s3filemanager.properties.SwaggerProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,7 +25,11 @@ import java.util.List;
  * Настраивает метаинформацию API: название, версию, описание и контакты.
  */
 @Configuration
+@RequiredArgsConstructor
+@EnableConfigurationProperties(SwaggerProperties.class)
 public class OpenApiConfig {
+
+    private final SwaggerProperties swaggerProperties;
 
     private static final String SECURITY_SCHEME_NAME = "Bearer Authentication";
     private static final String API_TITLE = "CloudFileHub API";
@@ -54,7 +62,8 @@ public class OpenApiConfig {
                         new Tag().name("Auth").description("Регистрация, вход и выход из системы"),
                         new Tag().name("Files").description("Загрузка, скачивание и удаление файлов"),
                         new Tag().name("Admin").description("Управление пользователями, файлами и аудит-логами — только для администратора")
-                ));
+                ))
+                .servers(buildServers());
     }
 
     private String loadDescription() {
@@ -67,5 +76,11 @@ public class OpenApiConfig {
         } catch (IOException e) {
             return API_TITLE;
         }
+    }
+
+    private List<Server> buildServers() {
+        return swaggerProperties.getServers().stream()
+                .map(s -> new Server().url(s.getUrl()).description(s.getDescription()))
+                .toList();
     }
 }
