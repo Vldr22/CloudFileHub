@@ -14,7 +14,6 @@
 # CloudFileHub
 > 🚀 **Live demo:** https://cloudfilehub.duckdns.org/swagger-ui/index.html
 
-# CloudFileHub
 Файловый хостинг на S3 с JWT-аутентификацией, ролевой моделью и асинхронным антивирусным сканированием.
 
 ## Архитектура и технологии
