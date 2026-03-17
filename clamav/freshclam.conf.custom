@@ -1,0 +1,4 @@
+Checks 1
+DatabaseMirror database.clamav.net
+DatabaseDirectory /var/lib/clamav
+LogTime yes
