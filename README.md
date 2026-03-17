@@ -9,6 +9,10 @@
 ![Nginx](https://img.shields.io/badge/Nginx-alpine-green)
 ![Swagger](https://img.shields.io/badge/Swagger-OpenAPI%203.0-85EA2D)
 ![ClamAV](https://img.shields.io/badge/ClamAV-antivirus-EFEF34)
+![VPS](https://img.shields.io/badge/Deploy-VPS-47A248)
+
+# CloudFileHub
+> 🚀 **Live demo:** https://cloudfilehub.duckdns.org/swagger-ui/index.html
 
 # CloudFileHub
 Файловый хостинг на S3 с JWT-аутентификацией, ролевой моделью и асинхронным антивирусным сканированием.
@@ -67,9 +71,6 @@ cd CloudFileHub
 cp .env.example .env                # заполнить переменные окружения
 ./scripts/docker-build-and-logs.sh  # 1) Собрать, 2) Поднять
 ```
-- API: http://localhost:8000/api/home
-- Swagger UI: http://localhost:8000/swagger-ui/index.html
-- Kafka UI: http://localhost:8000/kafka-ui/
 
 ## Структура проекта
 ```
