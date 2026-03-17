@@ -37,3 +37,10 @@ logging:
     root: WARN
     org.resume.s3filemanager: INFO
     org.springframework.security: WARN
+
+springdoc:
+  servers:
+    - url: https://cloudfilehub.duckdns.org
+      description: Production (VPS)
+    - url: http://localhost:8000
+      description: Local Docker (Nginx)
