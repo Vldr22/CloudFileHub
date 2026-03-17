@@ -78,9 +78,10 @@ services:
     restart: unless-stopped
     entrypoint: /bin/sh
     command: >
-      -c "freshclam && clamd --foreground --config-file=/etc/clamav/clamd.conf"
-    mem_limit: 3g
-    mem_reservation: 2g
+      -c "freshclam --config-file=/etc/clamav/freshclam.conf &&
+          clamd --foreground --config-file=/etc/clamav/clamd.conf"
+    mem_limit: 1g
+    mem_reservation: 512m
     networks:
       cloudfilehub-net:
         aliases:
@@ -97,6 +98,7 @@ services:
     volumes:
       - clamav_data:/var/lib/clamav
       - ./clamav/clamd.conf.custom:/etc/clamav/clamd.conf:ro
+      - ./clamav/freshclam.conf.custom:/etc/clamav/freshclam.conf:ro
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
