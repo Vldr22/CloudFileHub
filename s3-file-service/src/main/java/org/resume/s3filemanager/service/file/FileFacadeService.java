@@ -119,8 +119,8 @@ public class FileFacadeService {
      */
     @Auditable(operation = AuditOperation.FILE_DOWNLOAD, resourceType = ResourceType.FILE)
     public FileDownloadResponse downloadFile(String uniqueName) {
-        byte[] data = fileStorageService.downloadFileYandexS3(uniqueName);
         FileMetadata metadata = fileMetadataService.findByUniqueName(uniqueName);
+        byte[] data = fileStorageService.downloadFileYandexS3(uniqueName);
 
         String encodedFileName = URLEncoder.encode(
                 metadata.getOriginalName(),

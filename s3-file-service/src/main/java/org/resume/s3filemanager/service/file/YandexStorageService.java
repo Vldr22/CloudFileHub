@@ -4,6 +4,7 @@ package org.resume.s3filemanager.service.file;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.resume.common.properties.YandexStorageProperties;
+import org.resume.s3filemanager.exception.FileNotFoundException;
 import org.resume.s3filemanager.exception.S3YandexException;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -33,8 +34,8 @@ public class YandexStorageService {
      * Загружает файл в Yandex Object Storage.
      *
      * @param uniqueFileName уникальное имя файла (ключ объекта в S3)
-     * @param bytes содержимое файла в виде массива байт
-     * @param contentType MIME-тип файла
+     * @param bytes          содержимое файла в виде массива байт
+     * @param contentType    MIME-тип файла
      * @throws S3YandexException при ошибке взаимодействия с S3
      */
     public void uploadFileYandexS3(String uniqueFileName, byte[] bytes, String contentType) {
@@ -70,6 +71,9 @@ public class YandexStorageService {
         )) {
             return response.readAllBytes();
 
+        } catch (NoSuchKeyException e) {
+            log.warn("File not found in S3: {}", uniqueFileName);
+            throw new FileNotFoundException(uniqueFileName);
         } catch (S3Exception | IOException e) {
             log.error("S3 error downloading file: {}", uniqueFileName, e);
             throw new S3YandexException(e, uniqueFileName);
