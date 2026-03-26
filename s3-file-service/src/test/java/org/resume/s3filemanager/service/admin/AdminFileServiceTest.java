@@ -75,7 +75,7 @@ class AdminFileServiceTest {
     @Test
     void shouldReturnFilePage_whenFindAllByScanStatus() {
         Pageable pageable = PageRequest.of(0, 10);
-        when(fileMetadataRepository.findByScanStatus(ScanStatus.CLEAN, pageable))
+        when(fileMetadataRepository.findByScanStatusWithUser(ScanStatus.CLEAN, pageable))
                 .thenReturn(new PageImpl<>(List.of(fileMetadata)));
 
         Page<AdminFileResponse> result = adminFileService.findAllByScanStatus(ScanStatus.CLEAN, pageable);
@@ -84,7 +84,7 @@ class AdminFileServiceTest {
         assertThat(result.getContent().getFirst().uniqueName()).isEqualTo(fileMetadata.getUniqueName());
         assertThat(result.getContent().getFirst().scanStatus()).isEqualTo(ScanStatus.CLEAN);
         assertThat(result.getContent().getFirst().uploadedUserName()).isEqualTo(user.getUsername());
-        verify(fileMetadataRepository).findByScanStatus(ScanStatus.CLEAN, pageable);
+        verify(fileMetadataRepository).findByScanStatusWithUser(ScanStatus.CLEAN, pageable);
     }
 
     /**

@@ -53,10 +53,11 @@
 
 Сервисный слой основного модуля `s3-file-service` покрыт unit и интеграционными тестами. JaCoCo собирает объединённый отчёт покрытия.
 
-- **Unit-тесты** — Mockito, запускаются через Maven Surefire
-- **Интеграционные тесты** — Testcontainers (PostgreSQL, Redis, Kafka, MinIO), запускаются через Maven Failsafe
+* **Unit-тесты** — Mockito, запускаются через Maven Surefire
+* **Интеграционные тесты** — Testcontainers (PostgreSQL, Redis, Kafka, MinIO), запускаются через Maven Failsafe
 ```bash
-mvn clean verify  # все тесты + отчёт покрытия
+# Требования: JDK 21, Docker
+./mvnw verify -pl s3-file-service
 ```
 
 ![JaCoCo Coverage](docs/images/jacoco-screen.png)
@@ -85,6 +86,9 @@ CloudFileHub/
 ## Roadmap
 
 - [x] Unit и integration тесты
-- [ ] Email-уведомления о результатах сканирования
 - [x] Деплой на VPS
+- [ ] CI/CD (GitHub Actions)
+- [ ] Presigned URL для скачивания файлов напрямую из S3
+- [ ] Email-уведомления о результатах сканирования
 - [ ] Полнотекстовый поиск (Elasticsearch)
+- [ ] Outbox pattern — гарантированная доставка событий в Kafka

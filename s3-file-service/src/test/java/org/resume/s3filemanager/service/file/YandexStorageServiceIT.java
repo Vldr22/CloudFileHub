@@ -4,7 +4,7 @@ import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.resume.s3filemanager.BaseIntegrationTest;
-import org.resume.s3filemanager.exception.S3YandexException;
+import org.resume.s3filemanager.exception.FileNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
@@ -75,8 +75,7 @@ class YandexStorageServiceIT extends BaseIntegrationTest {
 
     /**
      * Проверяет удаление файла из хранилища.
-     * <p>
-     * Ожидается что после удаления попытка скачать файл вызывает {@link S3YandexException}.
+     * После удаления попытка скачать файл вызывает {@link FileNotFoundException}.
      */
     @Test
     void shouldDeleteFile() {
@@ -84,7 +83,6 @@ class YandexStorageServiceIT extends BaseIntegrationTest {
         storageService.deleteFileYandexS3(fileName);
 
         assertThatThrownBy(() -> storageService.downloadFileYandexS3(fileName))
-                .isInstanceOf(S3YandexException.class)
-                .hasCauseInstanceOf(NoSuchKeyException.class);
+                .isInstanceOf(FileNotFoundException.class);
     }
 }
