@@ -157,6 +157,8 @@ class FilePermissionServiceTest {
     void shouldThrowFileAccessDeniedException_whenUserTriesToDeleteOthersFile() {
         User otherUser = new User();
         otherUser.setId(FAKER.number().randomNumber());
+        user.setUsername(username);
+        user.setRole(UserRole.USER);
 
         FileMetadata file = buildFileMetadata(otherUser);
 

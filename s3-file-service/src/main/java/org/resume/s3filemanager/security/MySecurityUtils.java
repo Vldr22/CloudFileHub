@@ -3,11 +3,8 @@ package org.resume.s3filemanager.security;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.resume.s3filemanager.constant.SecurityConstants;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * Утилитарный класс для работы с Spring Security контекстом.
@@ -54,20 +51,15 @@ public class MySecurityUtils {
     /**
      * Извлекает IP адрес клиента из HTTP запроса.
      * <p>
-     * Проверяет заголовки X-Forwarded-For и X-Real-IP перед использованием
-     * RemoteAddr для корректного определения IP за прокси.
+     * Доверяет только заголовку X-Real-IP, проставляемому Nginx.
+     * X-Forwarded-For намеренно игнорируется защищая от возможной подделки клиента IP.
      *
      * @param request HTTP запрос
-     * @return IP адрес клиента или "unknown"
+     * @return IP адрес клиента или null
      */
     public static String extractClientIp(HttpServletRequest request) {
         if (request == null) {
             return null;
-        }
-
-        String forwardedFor = request.getHeader("X-Forwarded-For");
-        if (forwardedFor != null && !forwardedFor.isEmpty()) {
-            return forwardedFor.split(",")[0].trim();
         }
 
         String realIp = request.getHeader("X-Real-IP");
@@ -83,24 +75,5 @@ public class MySecurityUtils {
         }
 
         return remoteAddr;
-    }
-
-    /**
-     * Получает IP адрес клиента из текущего контекста запроса.
-     * <p>
-     * Проверяет заголовки X-Forwarded-For и X-Real-IP перед использованием
-     * RemoteAddr для корректного определения IP за прокси.
-     *
-     * @return IP адрес клиента или "unknown"
-     */
-    public static String getClientIp() {
-        return extractClientIp(getCurrentRequest());
-    }
-
-    private static HttpServletRequest getCurrentRequest() {
-        ServletRequestAttributes attributes =
-                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-
-        return attributes != null ? attributes.getRequest() : null;
     }
 }

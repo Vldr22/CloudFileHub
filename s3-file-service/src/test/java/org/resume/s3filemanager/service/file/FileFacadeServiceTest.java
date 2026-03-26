@@ -374,8 +374,23 @@ class FileFacadeServiceTest {
     void shouldThrowFileNotFoundException_whenMetadataNotFound() {
         String uniqueName = FAKER.internet().uuid() + ".pdf";
 
-        when(fileStorageService.downloadFileYandexS3(uniqueName)).thenReturn(new byte[]{1});
         when(fileMetadataService.findByUniqueName(uniqueName))
+                .thenThrow(new FileNotFoundException(uniqueName));
+
+        assertThatThrownBy(() -> fileFacadeService.downloadFile(uniqueName))
+                .isInstanceOf(FileNotFoundException.class);
+    }
+
+    /**
+     * Файл есть в БД, но отсутствует в S3 — FileNotFoundException пробрасывается.
+     */
+    @Test
+    void shouldThrowFileNotFoundException_whenFileNotInS3() {
+        String uniqueName = FAKER.internet().uuid() + ".pdf";
+
+        when(fileMetadataService.findByUniqueName(uniqueName))
+                .thenReturn(mock(FileMetadata.class));
+        when(fileStorageService.downloadFileYandexS3(uniqueName))
                 .thenThrow(new FileNotFoundException(uniqueName));
 
         assertThatThrownBy(() -> fileFacadeService.downloadFile(uniqueName))

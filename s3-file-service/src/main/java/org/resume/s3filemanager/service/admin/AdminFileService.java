@@ -34,9 +34,8 @@ public class AdminFileService {
     private final YandexStorageService yandexStorageService;
 
     public Page<AdminFileResponse> findAllByScanStatus(ScanStatus scanStatus, Pageable pageable) {
-        return fileMetadataRepository.findByScanStatus(scanStatus, pageable)
+        return fileMetadataRepository.findByScanStatusWithUser(scanStatus, pageable)
                 .map(this::toAdminFileResponse);
-
     }
 
     /**

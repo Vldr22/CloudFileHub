@@ -1,6 +1,6 @@
 package org.resume.s3filemanager.service.file;
 
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.resume.common.model.ScanStatus;
@@ -11,6 +11,7 @@ import org.resume.s3filemanager.exception.FileNotFoundException;
 import org.resume.s3filemanager.repository.FileMetadataRepository;
 import org.resume.s3filemanager.service.auth.UserService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /**

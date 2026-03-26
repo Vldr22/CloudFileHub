@@ -27,6 +27,9 @@ public interface FileMetadataRepository extends JpaRepository<FileMetadata, Long
 
     Page<FileMetadata> findByScanStatus(ScanStatus scanStatus, Pageable pageable);
 
+    @Query("SELECT f FROM FileMetadata f JOIN FETCH f.user WHERE f.scanStatus = :scanStatus")
+    Page<FileMetadata> findByScanStatusWithUser(@Param("scanStatus") ScanStatus scanStatus, Pageable pageable);
+
     List<FileMetadata> findAllByScanStatus(ScanStatus scanStatus);
 
     long countByScanStatus(ScanStatus scanStatus);

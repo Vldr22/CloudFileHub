@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Перечисление разрешенных типов файлов для загрузки.
@@ -31,7 +29,6 @@ public enum AllowedFileType {
     PNG("image/png", "png"),
     GIF("image/gif", "gif"),
     WEBP("image/webp", "webp"),
-    SVG("image/svg+xml", "svg"),
     BMP("image/bmp", "bmp"),
     ICO("image/x-icon", "ico"),
 
