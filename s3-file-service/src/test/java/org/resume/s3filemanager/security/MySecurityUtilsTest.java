@@ -79,14 +79,15 @@ class MySecurityUtilsTest {
     }
 
     /**
-     * Заголовок X-Forwarded-For содержит цепочку — возвращается первый IP.
+     * Заголовок X-Forwarded-For намеренно игнорируется — возвращается RemoteAddr.
      */
     @Test
-    void extractClientIp_returnsFirstIp_fromXForwardedFor() {
+    void extractClientIp_ignoresXForwardedFor_returnsRemoteAddr() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("X-Forwarded-For", "203.0.113.5, 10.0.0.1");
+        request.setRemoteAddr("192.168.1.100");
 
-        assertThat(MySecurityUtils.extractClientIp(request)).isEqualTo("203.0.113.5");
+        assertThat(MySecurityUtils.extractClientIp(request)).isEqualTo("192.168.1.100");
     }
 
     /**
