@@ -75,7 +75,7 @@ jobs:
           envs: POSTGRES_DB,POSTGRES_USER,POSTGRES_PASSWORD,REDIS_PASSWORD,ACCESS_KEY,SECRET_KEY,JWT_SECRET_KEY,ADMIN_NAME,ADMIN_PASSWORD,CORS_ALLOWED_ORIGINS,GHCR_PAT
           script: |
             set -e
-            cd ~/CloudFileHub
+            cd /opt/cloudfilehub
 
             # Запоминаем текущие образы на случай отката
             S3_PREV=$(docker inspect --format='{{index .RepoDigests 0}}' s3-file-service 2>/dev/null || echo "")
@@ -144,7 +144,7 @@ jobs:
           command_timeout: 5m
           script: |
             set -e
-            cd ~/CloudFileHub
+            cd /opt/cloudfilehub
 
             S3_PREV=$(cat /tmp/s3_prev_digest 2>/dev/null || echo "")
             AV_PREV=$(cat /tmp/av_prev_digest 2>/dev/null || echo "")
