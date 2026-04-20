@@ -109,17 +109,17 @@ jobs:
             echo "$AV_PREV" > /tmp/av_prev_digest
             docker image prune -f
 
-      # Проверяем что сервис поднялся — до 20 попыток каждые 15 секунд
+      # Проверяем что сервис поднялся — до 30 попыток каждые 15 секунд
       - name: Health check
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          command_timeout: 10m
+          command_timeout: 15m
           script: |
             set -e
-            MAX_RETRIES=20
+            MAX_RETRIES=30
             RETRY_INTERVAL=15
             URL="https://cloudfilehub.duckdns.org/api/home"
 
