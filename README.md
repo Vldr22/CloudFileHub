@@ -10,6 +10,8 @@
 ![Swagger](https://img.shields.io/badge/Swagger-OpenAPI%203.0-85EA2D)
 ![ClamAV](https://img.shields.io/badge/ClamAV-antivirus-EFEF34)
 ![VPS](https://img.shields.io/badge/Deploy-VPS-47A248)
+![CD](https://github.com/Vldr22/CloudFileHub/actions/workflows/cd.yml/badge.svg?style=flat-square)
+![CI](https://github.com/Vldr22/CloudFileHub/actions/workflows/ci.yml/badge.svg?style=flat-square)
 
 # CloudFileHub
 > 🚀 **Live demo:** https://cloudfilehub.duckdns.org/swagger-ui/index.html
@@ -87,7 +89,7 @@ CloudFileHub/
 
 - [x] Unit и integration тесты
 - [x] Деплой на VPS
-- [ ] CI/CD (GitHub Actions)
+- [x] CI/CD (GitHub Actions)
 - [ ] Presigned URL для скачивания файлов напрямую из S3
 - [ ] Email-уведомления о результатах сканирования
 - [ ] Полнотекстовый поиск (Elasticsearch)
