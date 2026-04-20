@@ -1,14 +1,15 @@
 #!/bin/bash
-# Универсальный скрипт для управления проектом CloudFileHub
+# Универсальный скрипт для управления проектом CloudFileHub (локальная разработка)
 
 CUR_DIR=$(pwd)
 PROJECT_DIR="$(dirname "$0")/.."
 
-CONTAINERS=("s3-file-service" "antivirus-service" "cloudfilehub-clamav")
+CONTAINERS=("s3-file-service-dev" "antivirus-service-dev" "cloudfilehub-clamav-dev")
+COMPOSE_FILE="docker-compose.dev.yml"
 
 while true; do
     echo
-    echo "=== Меню проекта CloudFileHub ==="
+    echo "=== Меню проекта CloudFileHub (dev) ==="
     echo "1) Собрать проект (Maven + Docker)"
     echo "2) Поднять контейнеры (docker compose up -d)"
     echo "3) Проверить запущенные контейнеры (docker ps)"
@@ -29,13 +30,15 @@ while true; do
             ./mvnw clean package -DskipTests
 
             echo "=== Сборка Docker образов ==="
-            docker compose build
+            docker compose -f "$COMPOSE_FILE" build
 
             cd "$CUR_DIR" || exit
             ;;
         2)
             echo "=== Поднимаем контейнеры ==="
-            docker compose up -d
+            cd "$PROJECT_DIR" || { echo "Не удалось перейти в папку проекта"; continue; }
+            docker compose -f "$COMPOSE_FILE" up -d
+            cd "$CUR_DIR" || exit
             ;;
         3)
             echo "=== Список запущенных контейнеров ==="
