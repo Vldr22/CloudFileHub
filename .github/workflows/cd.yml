@@ -77,6 +77,9 @@ jobs:
             set -e
             cd /opt/cloudfilehub
 
+            # Получаем актуальные конфиги из репозитория
+            git pull origin main
+
             # Запоминаем текущие образы на случай отката
             S3_PREV=$(docker inspect --format='{{index .RepoDigests 0}}' s3-file-service 2>/dev/null || echo "")
             AV_PREV=$(docker inspect --format='{{index .RepoDigests 0}}' antivirus-service 2>/dev/null || echo "")
