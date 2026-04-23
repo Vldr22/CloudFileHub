@@ -10,7 +10,7 @@ import org.resume.s3filemanager.exception.FileNotFoundException;
 import org.resume.s3filemanager.exception.InvalidScanStatusException;
 import org.resume.s3filemanager.repository.FileMetadataRepository;
 import org.resume.s3filemanager.service.file.YandexStorageService;
-import org.resume.s3filemanager.service.kafka.FileEventService;
+import org.resume.s3filemanager.service.kafka.OutboxService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ import static org.resume.s3filemanager.service.file.FilePaginationService.conver
 public class AdminFileService {
 
     private final FileMetadataRepository fileMetadataRepository;
-    private final FileEventService fileEventService;
+    private final OutboxService outboxService;
     private final YandexStorageService yandexStorageService;
 
     public Page<AdminFileResponse> findAllByScanStatus(ScanStatus scanStatus, Pageable pageable) {
@@ -55,7 +55,8 @@ public class AdminFileService {
 
         file.setScanStatus(ScanStatus.PENDING_SCAN);
         fileMetadataRepository.save(file);
-        fileEventService.publishFileUploadEvent(file);
+
+        outboxService.saveFileUploadEvent(file, file.getUser().getId());
 
         return toAdminFileResponse(file);
     }

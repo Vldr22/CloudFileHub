@@ -1,7 +1,9 @@
 package org.resume.s3filemanager;
 
 import org.junit.jupiter.api.AfterEach;
+import org.resume.s3filemanager.scheduler.OutboxScheduler;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -17,6 +19,9 @@ import org.testcontainers.utility.DockerImageName;
 @ActiveProfiles("test")
 @SuppressWarnings("resource")
 public abstract class BaseIntegrationTest {
+
+    @MockBean
+    private OutboxScheduler outboxScheduler;
 
     // CONSTANTS
     private static final String POSTGRES_IMAGE = "postgres:16-alpine";

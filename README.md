@@ -90,7 +90,8 @@ CloudFileHub/
 - [x] Unit и integration тесты
 - [x] Деплой на VPS
 - [x] CI/CD (GitHub Actions)
+- [x] Outbox pattern — гарантированная доставка событий в Kafka
 - [ ] Presigned URL для скачивания файлов напрямую из S3
 - [ ] Email-уведомления о результатах сканирования
 - [ ] Полнотекстовый поиск (Elasticsearch)
-- [ ] Outbox pattern — гарантированная доставка событий в Kafka
+

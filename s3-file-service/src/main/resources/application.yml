@@ -61,6 +61,12 @@ app:
   multiple-upload:
     max-batch-size: 5
 
+  outbox:
+    batch-size: 10
+    max-retry-count: 3
+    base-backoff-minutes: 5
+    scheduler-interval-ms: 30000
+
 # === Kafka Topics ===
 kafka:
   topics:

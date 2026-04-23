@@ -18,7 +18,7 @@ import org.resume.s3filemanager.exception.FileNotFoundException;
 import org.resume.s3filemanager.exception.InvalidScanStatusException;
 import org.resume.s3filemanager.repository.FileMetadataRepository;
 import org.resume.s3filemanager.service.file.YandexStorageService;
-import org.resume.s3filemanager.service.kafka.FileEventService;
+import org.resume.s3filemanager.service.kafka.OutboxService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -41,7 +41,7 @@ class AdminFileServiceTest {
     private FileMetadataRepository fileMetadataRepository;
 
     @Mock
-    private FileEventService fileEventService;
+    private OutboxService outboxService;
 
     @Mock
     private YandexStorageService yandexStorageService;
@@ -100,7 +100,7 @@ class AdminFileServiceTest {
 
         assertThat(result.scanStatus()).isEqualTo(ScanStatus.PENDING_SCAN);
         verify(fileMetadataRepository).save(fileMetadata);
-        verify(fileEventService).publishFileUploadEvent(fileMetadata);
+        verify(outboxService).saveFileUploadEvent(fileMetadata, fileMetadata.getUser().getId());
     }
 
     /**
@@ -128,7 +128,7 @@ class AdminFileServiceTest {
                 .isInstanceOf(InvalidScanStatusException.class);
 
         verify(fileMetadataRepository, never()).save(any());
-        verifyNoInteractions(fileEventService);
+        verifyNoInteractions(outboxService);
     }
 
     /**

@@ -17,7 +17,7 @@ import org.resume.s3filemanager.entity.User;
 import org.resume.s3filemanager.enums.CommonResponseStatus;
 import org.resume.s3filemanager.exception.*;
 import org.resume.s3filemanager.properties.FileUploadProperties;
-import org.resume.s3filemanager.service.kafka.FileEventService;
+import org.resume.s3filemanager.service.kafka.OutboxService;
 import org.resume.s3filemanager.validation.FileValidator;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,7 +57,7 @@ class FileFacadeServiceTest {
     private FileUploadProperties fileUploadProperties;
 
     @Mock
-    private FileEventService fileEventService;
+    private OutboxService outboxService;
 
     @InjectMocks
     private FileFacadeService fileFacadeService;
@@ -97,7 +97,7 @@ class FileFacadeServiceTest {
 
         verify(fileStorageService).uploadFileYandexS3(anyString(), any(), eq("application/pdf"));
         verify(fileMetadataService).saveFileWithPermission(any(), anyString(), eq(fileHash), eq(user));
-        verify(fileEventService).publishFileUploadEvent(eq(saved), eq(user.getId()));
+        verify(outboxService).saveFileUploadEvent(eq(saved), eq(user.getId()));
     }
 
     /**
@@ -111,7 +111,7 @@ class FileFacadeServiceTest {
         assertThatThrownBy(() -> fileFacadeService.uploadFile(validPdfFile))
                 .isInstanceOf(FileUploadLimitException.class);
 
-        verifyNoInteractions(fileStorageService, fileMetadataService, fileEventService);
+        verifyNoInteractions(fileStorageService, fileMetadataService, outboxService);
     }
 
     /**
@@ -127,7 +127,7 @@ class FileFacadeServiceTest {
         assertThatThrownBy(() -> fileFacadeService.uploadFile(validPdfFile))
                 .isInstanceOf(DuplicateFileException.class);
 
-        verifyNoInteractions(fileStorageService, fileMetadataService, fileEventService);
+        verifyNoInteractions(fileStorageService, fileMetadataService, outboxService);
     }
 
     /**
@@ -145,7 +145,7 @@ class FileFacadeServiceTest {
 
         verify(fileStorageService).uploadFileYandexS3(anyString(), any(), anyString());
         verify(fileStorageService).deleteFileYandexS3(anyString());
-        verifyNoInteractions(fileEventService);
+        verifyNoInteractions(outboxService);
     }
 
     // multipleUpload
