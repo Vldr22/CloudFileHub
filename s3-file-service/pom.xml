@@ -309,6 +309,7 @@
                 </executions>
                 <configuration>
                     <excludes>
+                        <exclude>org/resume/s3filemanager/controller/**</exclude>
                         <exclude>org/resume/s3filemanager/dto/**</exclude>
                         <exclude>org/resume/s3filemanager/entity/**</exclude>
                         <exclude>org/resume/s3filemanager/enums/**</exclude>

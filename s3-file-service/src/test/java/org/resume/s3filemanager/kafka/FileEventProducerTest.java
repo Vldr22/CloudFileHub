@@ -50,7 +50,7 @@ class FileEventProducerTest {
         when(kafkaProperties.getTopics()).thenReturn(topics);
         when(topics.getFileUploadEvents()).thenReturn(TOPIC);
         when(kafkaTemplate.send(any(), any(), any()))
-                .thenReturn(new CompletableFuture<>());
+                .thenReturn(CompletableFuture.completedFuture(null));
     }
 
     /**
